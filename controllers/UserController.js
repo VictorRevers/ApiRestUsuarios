@@ -48,17 +48,19 @@ class UserController{
 
 
     async edit(req, res){
-        var{id, name, role, email} = req.body;
-        var result = await User.update(id, email, name, role);
+        var{id, name, role, email} = req.body;   
         var update = true;
+        var password = undefined;
 
-        var msg = User.validate(email, name, password, update);
+        var msg = await User.validate(email, name, password, update);
 
         if(msg != undefined){
             res.status(400);
             res.send(msg);
             return;
        }
+
+       var result = await User.update(id, email, name, role);
 
         if(result != undefined){
             if(result.status){
@@ -71,6 +73,20 @@ class UserController{
             res.status(500);
             res.send("Erro no servidor!");          
         }             
+    }
+
+    async remove(req, res){
+        var id = req.params.id;
+
+        var result = await User.delete(id);
+
+        if(result.status){
+            res.send("Deletado!");
+        }else{
+            res.status(500);
+            res.send(result.err);
+        }
+
     }
 }
 

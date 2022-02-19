@@ -23,7 +23,7 @@ class User{
             }
         }
        
-        if(email != null|| email !=undefined){
+        if(email != null || email !=undefined){
             if(!emailRegex.test(email)){
                 msg = "Formato de E-mail inválido!"
                 return msg;
@@ -137,6 +137,20 @@ class User{
 
         }else{
             return {status: false, err: "Usuário não existe!"}
+        }
+    }
+
+    async delete(id){
+        var user = await this.findById(id);
+        if(user != undefined){
+            try{
+                await knex.delete().table("users").where('id', id);
+                return {status: true}
+            }catch(err){
+                return {status: false, err: err}
+            }
+        }else{
+            return {status: false, err: "Usuário não encontrado!"}
         }
     }
 }
