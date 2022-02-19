@@ -1,7 +1,7 @@
 const { RegisterSlave } = require("mysql2/lib/commands");
 const { RESERVED } = require("mysql2/lib/constants/client");
 var User = require("../models/User");
-var emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i;
+
 
 class UserController{
     async index(req, res){
@@ -22,30 +22,14 @@ class UserController{
 
     async create(req, res){
         var{email, name, password} = req.body;
-        
-        var letrasMaiusculas = /[A-Z]/;
+        var update = false;
+        var msg =  await User.validate(email, name, password, update);
 
-        if(email == undefined || email == null){
+        if(msg != undefined){
             res.status(400);
-            res.json({err: "E-mail inválido!"});
+            res.send(msg);
             return;
-        }else if(!emailRegex.test(email)){
-            res.status(400);
-            res.json({err: "Formato de E-mail inválido!"});
-            return;
-        }else if(name == undefined || name == null || name == ""){
-            res.status(400);
-            res.json({err: "Nome inválido!"});
-            return;
-        }else if(password == undefined || password == null){
-            res.status(400);
-            res.json({err: "Senha inválida!"});
-            return;
-        }else if(!letrasMaiusculas.test(password)){
-            res.status(400);
-            res.json({err: "Senha deve possuir ao menos uma letra maiuscula!"});
-            return;
-        }
+       }
 
         var emailExists = await User.findEmail(email);
 
@@ -66,6 +50,15 @@ class UserController{
     async edit(req, res){
         var{id, name, role, email} = req.body;
         var result = await User.update(id, email, name, role);
+        var update = true;
+
+        var msg = User.validate(email, name, password, update);
+
+        if(msg != undefined){
+            res.status(400);
+            res.send(msg);
+            return;
+       }
 
         if(result != undefined){
             if(result.status){
@@ -76,8 +69,7 @@ class UserController{
             }
         }else{
             res.status(500);
-            res.send("Erro no servidor!");
-            
+            res.send("Erro no servidor!");          
         }             
     }
 }

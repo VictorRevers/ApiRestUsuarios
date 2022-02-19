@@ -3,6 +3,50 @@ var bcrypt = require("bcrypt");
 
 class User{
 
+    async validate(email, name, password, update){
+       try{
+        var emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i;
+        var letrasMaiusculas = /[A-Z]/;
+        var msg = undefined;
+
+        if(!update){
+            if(email == undefined || email == null){
+                msg = "E-mail inválido!";  
+                return msg; 
+            }
+            else if(name == undefined || name == null || name == ""){              
+                msg = "Nome inválido!";
+                return msg;
+            }else if(password == undefined || password == null){
+                msg = "Senha inválida!";
+                return msg;
+            }
+        }
+       
+        if(email != null|| email !=undefined){
+            if(!emailRegex.test(email)){
+                msg = "Formato de E-mail inválido!"
+                return msg;
+            }
+        }
+
+        if(password != null || password !=undefined){
+            if(!letrasMaiusculas.test(password)){
+                msg = "Senha deve possuir ao menos uma letra maiuscula!"
+                return msg;
+            }
+        }
+         
+        return msg;
+
+       }catch(err){
+           console.log(err);
+           msg = undefined;
+           return msg;
+       }
+    }
+
+
     async findAll(){
         try{
             var result = await knex.select(["id", "name", "email", "role"]).table("users");
@@ -10,8 +54,7 @@ class User{
         }catch(err){
             console.log(err);
             return [];
-        }
-        
+        }       
     }
 
     async findById(id){
@@ -24,12 +67,10 @@ class User{
             }else{
                 return undefined;
             } 
-
         }catch(err){
             console.log(err);
             return undefined;
-        }
-        
+        }       
     }
 
   
