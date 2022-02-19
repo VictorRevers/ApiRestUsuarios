@@ -1,4 +1,5 @@
-var express = require("express")
+var express = require("express");
+const { route } = require("express/lib/application");
 var app = express();
 var router = express.Router();
 var HomeController = require("../controllers/HomeController");
@@ -7,6 +8,12 @@ var userController = require("../controllers/UserController");
 
 router.get('/', HomeController.index);
 
+
+//User Routes
 router.post('/user', UserController.create);
+router.get('/user', UserController.index);
+router.get('/user/:id', userController.findUserById);
+router.put('/user', userController.edit);
+
 
 module.exports = router;
