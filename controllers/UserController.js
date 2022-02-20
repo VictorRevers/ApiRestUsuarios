@@ -1,5 +1,6 @@
 const { RegisterSlave } = require("mysql2/lib/commands");
 const { RESERVED } = require("mysql2/lib/constants/client");
+var PasswordToken = require("../models/PasswordToken");
 var User = require("../models/User");
 
 
@@ -88,6 +89,36 @@ class UserController{
         }
 
     }
+
+    async recoverPassword(req, res){
+        var email =  req.body.email;
+
+        var result = await PasswordToken.create(email);
+
+        if(result.status){
+            console.log(result.token);
+            res.send(`${result.token}`);
+        }else{
+            res.status(500);
+            res.send(result.err);
+        }
+    }
+    
+    async changePassword(req,res){
+        var token = req.body.token;
+        var password= req.body.password;
+
+        var isTokenValid = await PasswordToken.validate(token);
+
+        if(isTokenValid.status){
+           await User.changePassword(password, isTokenValid.token.user_id, isTokenValid.token.token, isTokenValid.token.id);
+           res.send("Senha alterada!");
+        }else{
+            res.status(406);
+            res.send("Token inválido!");
+        }
+       
+    }    
 }
 
 module.exports = new UserController();
