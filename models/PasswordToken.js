@@ -48,6 +48,7 @@ class PasswordToken{
     }
 
     async setUsed(id){  
+        //Verificar pq está dando problema
         await knex.update('used', 1).where('id', id).table("passwordtokens");
     }
 

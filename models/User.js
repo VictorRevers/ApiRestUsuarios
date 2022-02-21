@@ -47,6 +47,10 @@ class User{
        }
     }
 
+    async validatePassword(){
+
+    }
+
 
     async findAll(){
         try{
@@ -172,10 +176,9 @@ class User{
 
     async changePassword(newPassword, id, token, tokenId){
         var hash = await bcrypt.hash(newPassword, 10);
-
         await knex.update('password', hash).where('id', id).table("users");
-
-        await PasswordToken.setUsed(tokenId);
+        await knex.update('used', 1).where('id', tokenId).table("passwordtokens");
+        //await PasswordToken.setUsed(tokenId); 
     }
 }
 
