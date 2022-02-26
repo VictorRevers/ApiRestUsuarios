@@ -1,6 +1,7 @@
 const { RegisterSlave } = require("mysql2/lib/commands");
 const { RESERVED } = require("mysql2/lib/constants/client");
 var PasswordToken = require("../models/PasswordToken");
+var TokenGenerator = require("../models/TokenGenerator");
 var User = require("../models/User");
 
 
@@ -12,7 +13,7 @@ class UserController{
 
     async findUserById(req, res){
         var id = req.params.id;
-        var user = await User.findById(id);
+        var user = await User.findById(id);       
         if(user == undefined){
             res.status(404);
             res.json({});

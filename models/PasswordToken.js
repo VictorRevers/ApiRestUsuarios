@@ -1,5 +1,6 @@
 var knex =  require("../database/connection");
 var User = require('./User');
+var TokenGenerator = require('./TokenGenerator');
 
 class PasswordToken{
     async create(email){
@@ -7,7 +8,7 @@ class PasswordToken{
 
       if(user != undefined){
            try{
-            var token = Date.now();
+            var token = await TokenGenerator.token();
 
             await knex.insert({
                 user_id: user.id,
