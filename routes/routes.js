@@ -5,18 +5,20 @@ var router = express.Router();
 var HomeController = require("../controllers/HomeController");
 const UserController = require("../controllers/UserController");
 var userController = require("../controllers/UserController");
+var AdminAuth = require("../middleware/AdminAuth");
 
 router.get('/', HomeController.index);
 
 
 //User Routes
 router.post('/user', UserController.create);
-router.get('/user', UserController.index);
-router.get('/user/:id', userController.findUserById);
-router.put('/user', userController.edit);
-router.delete('/user/:id', UserController.remove);
+router.get('/user', AdminAuth, UserController.index);
+router.get('/user/:id', AdminAuth, UserController.findUserById);
+router.put('/user', AdminAuth, UserController.edit);
+router.delete('/user/:id', AdminAuth, UserController.remove);
 router.post('/recoverpassword', UserController.recoverPassword);
 router.put("/changepassword", UserController.changePassword);
+router.post("/login", UserController.login);
 
 
 

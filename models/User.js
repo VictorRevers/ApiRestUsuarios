@@ -51,6 +51,10 @@ class User{
 
     }
 
+    async checkPassword(){
+        
+    }
+
 
     async findAll(){
         try{
@@ -80,7 +84,7 @@ class User{
 
     async findByEmail(email){
         try{
-            var result = await knex.select(["id", "name", "email", "role"]).table("users").where('email', email);
+            var result = await knex.select(["id", "name", "password","email", "role"]).table("users").where('email', email);
 
             if(result.length > 0){
                 return result[0];
